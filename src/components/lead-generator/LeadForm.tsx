@@ -1,4 +1,5 @@
 import type { FormData } from "./types";
+import { useState, useEffect } from "react";
 
 interface LeadFormProps {
   formData: FormData;
@@ -15,6 +16,40 @@ export const LeadForm = ({
   onInputChange,
   onSubmit,
 }: LeadFormProps) => {
+  const [loadingMessage, setLoadingMessage] = useState("Getting started...");
+
+  useEffect(() => {
+    let messageIndex = 0;
+    const messages = [
+      "Getting started...",
+      `Searching for leads in ${formData.location}...`,
+      "Found some great matches!",
+      "Checking contact information...",
+      "Making sure everything is up to date...",
+      "Almost ready! Just a few more seconds...",
+      "Finalizing your lead list...",
+    ];
+
+    let interval: NodeJS.Timeout;
+
+    if (loading) {
+      interval = setInterval(() => {
+        if (messageIndex < messages.length - 1) {
+          messageIndex += 1;
+          setLoadingMessage(messages[messageIndex]);
+        }
+      }, 3000); // Change message every 3 seconds
+    } else {
+      setLoadingMessage("Getting started...");
+    }
+
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  }, [loading]);
+
   return (
     <form onSubmit={onSubmit} className="space-y-4 mb-8">
       <div>
@@ -102,7 +137,7 @@ export const LeadForm = ({
                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
               ></path>
             </svg>
-            Generating Leads...
+            {loadingMessage}
           </div>
         ) : (
           "Generate Leads"
