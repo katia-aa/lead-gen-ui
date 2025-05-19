@@ -48,7 +48,7 @@ export const LeadForm = ({
         clearInterval(interval);
       }
     };
-  }, [loading]);
+  }, [formData.location, loading]);
 
   return (
     <form onSubmit={onSubmit} className="space-y-4 mb-8">
